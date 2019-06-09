@@ -63,6 +63,40 @@ class WeatherDisplay extends Component {
     return color;
 }
 
+setIcon = () => {
+    let weather = this.state.conditions.weather[0].description;
+    let icon;
+    switch (true) {
+        case ((weather.includes("rain") && (weather.includes("light") || weather.includes("moderate"))) || weather.includes("drizzle")):
+            icon = <i className="fas fa-cloud-rain"></i>
+            break;
+        case (weather.includes("rain") && (weather.includes("heavy") || weather.includes("shower"))):
+            icon = <i className="fas fa-cloud-showers-heavy"></i>
+            break;
+        case(weather.includes("sun") || weather.includes("sunny") || weather.includes("clear sky")):
+            icon = <i className="fas fa-sun"></i>
+            break;
+        case(weather.includes("clouds") && (weather.includes("broken") || weather.includes("few") || weather.includes("scattered"))):
+            icon = <i className="fas fa-cloud-sun"></i>
+            break;
+        case(weather.includes("clouds") && weather.includes("overcast")):
+            icon = <i className="fas fa-cloud"></i>
+            break;
+        case(weather.includes("haze") || weather.includes("mist")):
+            icon = <i className="fas fa-smog"></i>
+            break;
+        case(weather.includes("thunderstorm")):
+            icon = <i className="fas fa-bolt"></i>
+            break;
+        case(weather.includes("snow")):
+            icon = <i class="fas fa-snowflake"></i>
+            break;
+        default:
+          icon = "";
+    }
+    return icon;
+}
+
 handleChange = e => {
     let value = e.target.value;
     let name = e.target.name;
@@ -82,7 +116,7 @@ handleChange = e => {
             <div className="card card-body" style={this.state.conditions ? {background: this.setBackgroundColor()} : {background: "#F6F6F6"}}>
                 {this.state.conditions ? 
                 <React.Fragment>
-                <p>{(this.state.conditions.weather[0].description).charAt(0).toUpperCase() + (this.state.conditions.weather[0].description).slice(1)}</p>
+                <p>{this.setIcon()} {(this.state.conditions.weather[0].description).charAt(0).toUpperCase() + (this.state.conditions.weather[0].description).slice(1)}</p>
                 <p>Max. temperature: {(this.state.conditions.main.temp_max - 273).toFixed(1) + "°C"}</p>
                 <p>Min. temperature: {(this.state.conditions.main.temp_min - 273).toFixed(1) + "°C"}</p>
                 <p>Humidity: {this.state.conditions.main.humidity + "%"}</p>
