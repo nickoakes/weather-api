@@ -25,8 +25,18 @@ class WeatherDisplay extends Component {
         axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${searchTerm}&mode=json&appid=${apiKey}`)
         .then(res => {
             this.setState({
-                conditions: res.data
+                conditions: res.data,
+                error: ""
             })
+        })
+        .catch(err => {
+            console.log(err)
+                this.setState(prevState => {
+                    return {
+                        ...prevState,
+                        error: "No weather data found for this location"
+                    };
+                });
         })
     }
 
@@ -120,7 +130,7 @@ handleChange = e => {
                 <p>Max. temperature: {(this.state.conditions.main.temp_max - 273).toFixed(1) + "°C"}</p>
                 <p>Min. temperature: {(this.state.conditions.main.temp_min - 273).toFixed(1) + "°C"}</p>
                 <p>Humidity: {this.state.conditions.main.humidity + "%"}</p>
-                </React.Fragment> : <h2>"Loading, please wait..."</h2>}
+                </React.Fragment> : <h3>"Loading, please wait..."</h3>}
             </div>
             <form>
             <div className="input-group">
@@ -129,9 +139,10 @@ handleChange = e => {
                 <button className="btn btn-dark" type="button" onClick={() => this.searchByCity()}>
                     Search
                 </button>
-                </div>
+            </div>
             </div>
             </form>
+            <h3>{this.state.error ? this.state.error : ""}</h3>
             </div>
         )
     }
