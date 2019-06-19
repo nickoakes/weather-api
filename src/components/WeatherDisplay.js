@@ -19,7 +19,7 @@ class WeatherDisplay extends Component {
                 conditions: res.data
             });
         });
-        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=Seoul&per_page=1&format=json&nojsoncallback=1`)
+        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=Seoul,city&tag_mode=all&geo_context=2&content_type=1&accuracy=11&per_page=1&format=json&nojsoncallback=1`)
         .then(res => {
             this.setState(prevState => {
                 return {
@@ -48,7 +48,7 @@ class WeatherDisplay extends Component {
                     };
                 });
         })
-        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=${searchTerm}&per_page=1&format=json&nojsoncallback=1`)
+        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=${searchTerm},city&tag_mode=all&geo_context=2&content_type=1&accuracy=11&per_page=1&format=json&nojsoncallback=1`)
         .then(res => {
             this.setState(prevState => {
                 return {
