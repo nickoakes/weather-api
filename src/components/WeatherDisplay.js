@@ -127,25 +127,32 @@ setIcon = () => {
 }
 
 handleChange = e => {
-    let value = e.target.value;
-    let name = e.target.name;
-    this.setState( prevState => {
-       return { 
-                ...prevState, [name]: value
-                  }
-    }
-    );
+        let value = e.target.value;
+        let name = e.target.name;
+        this.setState( prevState => {
+           return { 
+                    ...prevState, [name]: value
+                      }
+                }
+        );
 }
 
     render() {
         return (
             <div className="container">
-                <h1>Current weather conditions in {this.state.conditions.name}</h1>
+                <div className="row">
+                    <div className="col-10 text-left">
+                        <h1>Current weather conditions in {this.state.conditions.name}, {this.state.conditions.sys ? this.state.conditions.sys.country : ""}</h1>
+                    </div>
+                    <div className="col-2 text-center">
+                        {this.state.conditions.sys ? <img src={`https://www.countryflags.io/${this.state.conditions.sys.country}/flat/64.png`} /> : ""}
+                    </div>
+                </div>
                 <hr/>
                 <div className="row">
                     <div className="col-4">
                         <div className="card">
-                            {this.state.image ? <img src={`https://farm${this.state.image.farm}.staticflickr.com/${this.state.image.server}/${this.state.image.id}_${this.state.image.secret}.jpg`} className="rounded" style={{maxHeight: "200px"}} /> : ""}
+                            {this.state.image ? <img src={`https://farm${this.state.image.farm}.staticflickr.com/${this.state.image.server}/${this.state.image.id}_${this.state.image.secret}.jpg`} className="rounded" style={{maxHeight: "200px"}} alt="" /> : <h3>No image found</h3>}
                         </div>
                     </div>
                     <div className="col-8">
@@ -160,9 +167,9 @@ handleChange = e => {
                         </div>
                     </div>
                 </div>
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                 <div className="input-group">
-                    <input type="text" className="form-control" name="search" onChange={this.handleChange} placeholder="Search" />
+                    <input type="text" className="form-control" name="search" onChange={this.handleChange} onKeyDown={(e) => this.searchOnKeyDown(e)} placeholder="Search" />
                     <div className="input-group-btn">
                     <button className="btn btn-dark" type="button" onClick={() => this.searchByCity()}>
                         Search
