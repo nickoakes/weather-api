@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios';
 
 const apiKey = process.env.REACT_APP_OPEN_WEATHER_MAP_API_KEY;
+const flickrKey = process.env.REACT_APP_FLICKR_API_KEY;
 
 class WeatherDisplay extends Component {
     constructor(props) {
@@ -18,6 +19,15 @@ class WeatherDisplay extends Component {
                 conditions: res.data
             });
         });
+        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=Seoul&per_page=1&format=json&nojsoncallback=1`)
+        .then(res => {
+            this.setState(prevState => {
+                return {
+                    ...prevState,
+                    image: res.data.photos.photo[0]
+                };
+            });
+        })
     }
 
     searchByCity = () => {
@@ -37,6 +47,15 @@ class WeatherDisplay extends Component {
                         error: "No weather data found for this location"
                     };
                 });
+        })
+        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${flickrKey}&tags=${searchTerm}&per_page=1&format=json&nojsoncallback=1`)
+        .then(res => {
+            this.setState(prevState => {
+                return {
+                    ...prevState,
+                    image: res.data.photos.photo[0]
+                };
+            });
         })
     }
 
@@ -121,28 +140,37 @@ handleChange = e => {
     render() {
         return (
             <div className="container">
-            <h1>Current weather conditions in {this.state.conditions.name}</h1>
-            <hr/>
-            <div className="card card-body" style={this.state.conditions ? {background: this.setBackgroundColor()} : {background: "#F6F6F6"}}>
-                {this.state.conditions ? 
-                <React.Fragment>
-                <p>{this.setIcon()} {(this.state.conditions.weather[0].description).charAt(0).toUpperCase() + (this.state.conditions.weather[0].description).slice(1)}</p>
-                <p>Max. temperature: {(this.state.conditions.main.temp_max - 273).toFixed(1) + "°C"}</p>
-                <p>Min. temperature: {(this.state.conditions.main.temp_min - 273).toFixed(1) + "°C"}</p>
-                <p>Humidity: {this.state.conditions.main.humidity + "%"}</p>
-                </React.Fragment> : <h3>"Loading, please wait..."</h3>}
-            </div>
-            <form>
-            <div className="input-group">
-                <input type="text" className="form-control" name="search" onChange={this.handleChange} placeholder="Search" />
-                <div className="input-group-btn">
-                <button className="btn btn-dark" type="button" onClick={() => this.searchByCity()}>
-                    Search
-                </button>
-            </div>
-            </div>
-            </form>
-            <h3>{this.state.error ? this.state.error : ""}</h3>
+                <h1>Current weather conditions in {this.state.conditions.name}</h1>
+                <hr/>
+                <div className="row">
+                    <div className="col-4">
+                        <div className="card">
+                            {this.state.image ? <img src={`https://farm${this.state.image.farm}.staticflickr.com/${this.state.image.server}/${this.state.image.id}_${this.state.image.secret}.jpg`} className="rounded" style={{maxHeight: "200px"}} /> : ""}
+                        </div>
+                    </div>
+                    <div className="col-8">
+                        <div className="card card-body text-center" style={this.state.conditions ? {background: this.setBackgroundColor()} : {background: "#F6F6F6"}}>
+                        {this.state.conditions ? 
+                        <React.Fragment>
+                        <p>{this.setIcon()} {(this.state.conditions.weather[0].description).charAt(0).toUpperCase() + (this.state.conditions.weather[0].description).slice(1)}</p>
+                        <p>Max. temperature: {(this.state.conditions.main.temp_max - 273).toFixed(1) + "°C"}</p>
+                        <p>Min. temperature: {(this.state.conditions.main.temp_min - 273).toFixed(1) + "°C"}</p>
+                        <p>Humidity: {this.state.conditions.main.humidity + "%"}</p>
+                        </React.Fragment> : <h3>"Loading, please wait..."</h3>}
+                        </div>
+                    </div>
+                </div>
+                <form>
+                <div className="input-group">
+                    <input type="text" className="form-control" name="search" onChange={this.handleChange} placeholder="Search" />
+                    <div className="input-group-btn">
+                    <button className="btn btn-dark" type="button" onClick={() => this.searchByCity()}>
+                        Search
+                    </button>
+                </div>
+                </div>
+                </form>
+                <h3>{this.state.error ? this.state.error : ""}</h3>
             </div>
         )
     }
